@@ -1,0 +1,26 @@
+name: DevSecOps
+
+on:
+  push:
+
+jobs:
+  test-secret:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar que existe el secreto
+        env:
+          TOKEN: ${{ secrets.DB_PASSWORD }}
+        run: |
+          if [ -n "$TOKEN" ]; then
+            echo "Secreto cargado correctamente"
+          else
+            echo "No se encontró el secreto"
+            exit 1
+          fi
+
+      - name: Pipeline completado
+        run: echo "Workflow ejecutado exitosamente"

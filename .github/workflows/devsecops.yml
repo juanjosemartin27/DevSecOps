@@ -1,26 +1,35 @@
-name: DevSecOps
+name: DevSecOps Pipeline
 
 on:
   push:
+  pull_request:
 
 jobs:
-  test-secret:
+  security-validation:
+
     runs-on: ubuntu-latest
 
+    env:
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
     steps:
-      - name: Descargar repositorio
+
+      - name: Clonar repositorio
         uses: actions/checkout@v4
 
-      - name: Verificar que existe el secreto
-        env:
-          TOKEN: ${{ secrets.DB_PASSWORD }}
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verificar Secret
         run: |
-          if [ -n "$TOKEN" ]; then
-            echo "Secreto cargado correctamente"
+          if [ -n "$DB_PASSWORD" ]; then
+            echo "Secret cargado correctamente"
           else
-            echo "No se encontró el secreto"
+            echo "Secret no encontrado"
             exit 1
           fi
 
-      - name: Pipeline completado
-        run: echo "Workflow ejecutado exitosamente"
+      - name: Pipeline finalizado
+        run: echo "Validaciones completadas"
